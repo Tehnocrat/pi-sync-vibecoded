@@ -50,6 +50,7 @@ manifest needed by `pull` on a new machine.
   "branch": "main",
   "include": ["settings.json", "extensions/", "..."], // relative to agent dir, or absolute
   "extra": [{ "path": "~/.agents/skills", "as": "extra/agents-skills" }],
+  // ^ default (DEFAULT_EXTRA) when omitted; `[]` disables it
   "exclude": ["node_modules", ".git", "recovery", "*.log"], // matched on basename, `*`/`?` globs
   "includeSecrets": false,      // adds auth.json + models-store.json
   "autoPushOnExit": false,      // session_shutdown -> push()
@@ -66,6 +67,11 @@ before `pi-sync.json` exists.
 against the agent dir, absolute paths stay absolute (and therefore are
 machine-specific — prefer `~` or relative).
 
+Skills come from two places: `<agent-dir>/skills/` via `include` and
+`~/.agents/skills` via the default `extra` entry (Pi loads both). The
+`~/.agents/skills` default matters on machines that use the shared Agent Skills
+location instead of the agent-dir one.
+
 ## 4. Code map
 
 ```
@@ -76,7 +82,7 @@ git/gitOk           pi.exec wrapper; sets GIT_TERMINAL_PROMPT=0 via `env` (non-W
 ensureRepo          clone if missing, else fix origin URL
 remoteBranchExists  fetch + rev-parse origin/<branch>
 checkoutBranch      checkout existing branch or create it from origin
-bootstrapScript     text of .pi-sync/bootstrap.sh (tar pipe, no rsync dependency)
+bootstrapScript     text of .pi-sync/bootstrap.sh (tar pipe + per-extra cp, no rsync dependency)
 withRepoManifest    pull-time overlay of include/extra/exclude from the repo's pi-sync.json
 status/push/pull    the three actions (all return SyncResult)
 report/errorMessage UI helpers
@@ -127,7 +133,10 @@ switch to merge without thinking about orphaned extensions.
   it with a repo you would trust with your credentials.
 - **Deploy never writes into `sessions/`, `install/`, `npm/`, `bin/`** because
   they are not in the default include list.
-- **bootstrap.sh is generated, not hand-edited.** Edit `bootstrapScript()`.
+- **bootstrap.sh is generated, not hand-edited.** Edit `bootstrapScript()`. It
+  deploys `include` paths via tar and every `extra` path via an explicit
+  `cp -a` after the tar step; the `extra/<as>` trees are excluded from the tar
+  and their now-empty parents are pruned with `rmdir -p`.
 - Pull does not reload automatically in all modes: the command offers a confirm
   (works in TUI/RPC), the tool only returns instructions.
 

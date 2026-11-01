@@ -15,10 +15,12 @@ machine A ~/.pi/agent ──/sync-push──▶ private repo ──/sync-pull─
 - `pull` deploys the repo over the local agent dir and **backs up** everything
   it replaces.
 - Secrets are excluded by default (`auth.json`, `models-store.json`).
+- Skills are synced from both the agent dir (`skills/`) and the shared
+  **`~/.agents/skills`** location that Pi also loads from.
 - `sessions/`, `install/`, `npm/`, `bin/` and the sync mirror itself are never
   touched.
 - Every push writes `.pi-sync/bootstrap.sh` into the repo, so a machine **without
-  Pi** can still be bootstrapped with `sh bootstrap.sh`.
+  Pi** can still be bootstrapped with `sh bootstrap.sh` (extra paths included).
 
 ---
 
@@ -119,7 +121,9 @@ pi_sync({ "action": "pull", "repo": "https://github.com/you/pi-config.git" })
     "pi-sync.json"                              // keep the manifest in the repo
   ],
 
-  // Sync paths that live outside the agent dir.
+  // Sync paths that live outside the agent dir. Defaults to the shared
+  // Agent Skills location, so `~/.agents/skills` travels with the config.
+  // An explicit [] disables extra paths.
   "extra": [
     { "path": "~/.agents/skills", "as": "extra/agents-skills" }
   ],
@@ -137,6 +141,11 @@ pi_sync({ "action": "pull", "repo": "https://github.com/you/pi-config.git" })
 Repo resolution order: explicit argument (`/sync-pull <url>`, tool `repo`) →
 `pi-sync.json` → `PI_SYNC_REPO` env var. The fallbacks let a fresh machine pull
 before it has a config.
+
+When `extra` is omitted entirely, pi-sync defaults it to
+`~/.agents/skills` → `extra/agents-skills`. Existing configs that spell out
+`"extra": []` keep syncing nothing extra — set the entry explicitly (or rerun
+`/sync-init`) to pick up shared skills.
 
 ### Where state lives
 

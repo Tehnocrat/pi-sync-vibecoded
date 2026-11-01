@@ -1,6 +1,6 @@
 {
   "name": "pi-sync-vibecoded",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Keep your Pi agent config (settings, extensions, skills, prompts, memory) in a git repo and deploy it to any machine.",
   "keywords": [
     "pi-package",
