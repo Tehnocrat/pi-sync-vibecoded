@@ -1,5 +1,12 @@
 # pi-sync — memo
 
+> **Published as a Pi package:** <https://github.com/Tehnocrat/pi-sync-vibecoded>
+> (`pi install git:github.com/Tehnocrat/pi-sync-vibecoded`). This repo is the
+> source of truth; `~/.pi/agent/extensions/pi-sync.ts` on a machine is either an
+> installed copy or a loose-file install from `install.sh`. Never load both the
+> package and a loose copy in the same agent dir — Pi will register the
+> commands and tool twice.
+
 Companion notes for `pi-sync.ts`. Read the file header first; this memo explains
 *why* it is built the way it is and what to watch out for when changing it.
 
