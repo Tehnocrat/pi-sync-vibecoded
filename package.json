@@ -1,0 +1,35 @@
+{
+  "name": "pi-sync-vibecoded",
+  "version": "1.0.0",
+  "description": "Keep your Pi agent config (settings, extensions, skills, prompts, memory) in a git repo and deploy it to any machine.",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "pi-coding-agent",
+    "sync",
+    "dotfiles",
+    "backup"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tehnocrat/pi-sync-vibecoded.git"
+  },
+  "pi": {
+    "extensions": [
+      "./extensions/pi-sync.ts"
+    ]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "files": [
+    "extensions/",
+    "docs/",
+    "install.sh",
+    "README.md",
+    "LICENSE"
+  ]
+}
